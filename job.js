@@ -13,27 +13,36 @@ var MongoClient = require('mongodb').MongoClient;
 new CronJob(frequency, function() {
 	db.many("SELECT category,sum(stock) as stock FROM Product GROUP BY category").then(function (data) {
 		
-		saveBatchViewInMongoDB(data);
+		saveBatchViewInMongoDB('stockByCategory',data);
 		
     })
     .catch(function (error) {
         console.log("ERROR: ", error);
-    });  
+    });
+
+	db.many("SELECT * FROM Product").then(function (data) {
+		
+		saveBatchViewInMongoDB('stockByProduct',data);
+		
+    })
+    .catch(function (error) {
+        console.log("ERROR: ", error);
+    });	
 	
 }, null, true, 'America/Los_Angeles');
 
 
-var saveBatchViewInMongoDB = function(data) {
+var saveBatchViewInMongoDB = function(id,data) {
 	
 	MongoClient.connect('mongodb://test:test@ds021969.mlab.com:21969/cloud', function(err, db) {
 		if (err) {
 			throw err;
 		}
-		db.collection('stockByCategory').save({_id:'stockByCategory',data},function(err, result) {
+		db.collection(id).save({_id:id,data},function(err, result) {
 			if (err) {
 				throw err;
 			} 
-			console.log('Batch view saved in Mongo DB');
+			console.log('Batch view saved in Mongo DB '+id);
 		});
 	});
 	

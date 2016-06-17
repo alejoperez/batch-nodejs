@@ -1,7 +1,7 @@
 
 //Jobs
 var CronJob = require('cron').CronJob;
-var frequency = '*/30 * * * * *';
+var frequency = '*/15 * * * * *';
 
 // PostgreSQL
 var pgp = require("pg-promise")(/*options*/);
